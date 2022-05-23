@@ -1,0 +1,28 @@
+{
+    "destinations": [
+        {
+            "address": "",
+            "transitModes": [
+                "walking",
+                "transit"
+            ]
+        },
+        {
+            "address": "",
+            "transitModes": [
+                "walking",
+                "transit"
+            ]
+        },
+        {
+            "address": "",
+            "transitModes": [
+                "walking",
+                "transit"
+            ]
+        }
+    ],
+    "propertyUrls": [
+        "https://streeteasy.com/building/the-mynt/3e"
+    ]
+}

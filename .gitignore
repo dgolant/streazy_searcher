@@ -1,0 +1,5 @@
+node_modules/
+output/
+config/secrets.json
+config/input.json
+package-lock.json
