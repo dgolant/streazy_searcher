@@ -14,7 +14,7 @@ export default function (ua: string): Record<string, string> {
     "sec-fetch-site": "same-origin",
     "upgrade-insecure-requests": "1",
     cookie: null,
-    Referer: "https://streeteasy.com/building/new-york-by-gehry/38k?featured=1",
+    Referer: null,
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "User-Agent": ua
   };

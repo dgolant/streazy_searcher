@@ -11,7 +11,7 @@ import path from 'path';
 const headers = buildHeaders(fakeUa()); // cannot be used without cookieGen
 const config = JSON.parse(fsSync.readFileSync('./config/secrets.json', { encoding: "utf8" }));
 const MAPS_API_KEY = config['MAPS_API_KEY'];
-const WAIT_SECONDS = .5;
+const WAIT_SECONDS = 3;
 
 const debug = (s: string | Record<string, any>) => {
   if (process.env.DEBUG) {
@@ -34,8 +34,8 @@ const error = (s: string | Record<string, any>) => {
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 async function delayer(counter: number): Promise<void> {
-  if (counter % 3 === 0) {
-    debug(`waiting ${WAIT_SECONDS} seconds`);
+  if (counter % 1 === 0) {
+    debug(`waiting ${WAIT_SECONDS} seconds, count ${counter}`);
     await delay(WAIT_SECONDS * 1000);
   }
 }
@@ -106,7 +106,7 @@ function parsePropertyDetails(detailsSection, doc): PropertyDetails {
     if (elementText.includes(" per ft²")) {
       detailsObject.pricePerFoot = elementText;
     } else if (elementText.includes("ft²")) {
-      detailsObject.squareFootage = elementText;
+      detailsObject.squareFootage = elementText.replace(',', '');
     } else if (elementText.includes("rooms")) {
       detailsObject.numRooms = elementText;
     } else if (elementText.includes("beds")) {
@@ -131,8 +131,10 @@ async function getProperty(url: string): Promise<PropertyResponse> {
   };
   try {
     headers.cookie = cookieGen();
-    if (!headers.cookie) {
-      throw new Error('COOKIE BLANK')
+    headers.Referer = url;
+    if (!headers.cookie || !headers.Referer) {
+      const e = new Error('HEADERS_MALFORMED')
+      e.message = JSON.stringify({ cookie: headers.cookie, Referer: headers.Referer });
     }
     const response = await axios.get(url, { headers });
 
@@ -249,7 +251,7 @@ async function main() {
 (async function () {
   try {
     const a = await Promise.all(await main());
-    console.log(a)
+    // console.dir(JSON.stringify(a));
     const timestamp = (new Date()).toISOString().replace('.', 's').replace(/\:/g, "_");
     const writePath = path.join(process.cwd(), 'output', `output-${timestamp}.json`);
     await fs.writeFile(writePath, JSON.stringify(a, null, 2));
